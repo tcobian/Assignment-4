@@ -9,22 +9,39 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+```{r, include=FALSE}
+library(tidyverse)
+library(knitr)
+lobster<-read_csv("lobster_size_abundance.csv")
+lobster
+#read in tidyverse and knitr packeges (what other packages do you think we will need?)
+#load data and names it "lobster"
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+##1. Lobster abundance and fishing pressure
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+#exploratory graphs relating size and count to site and date/ year
+#Considering changing names of months and sites
+ggplot(lobster, aes(x = COUNT, y = SITE ))+
+  geom_point(color = "blue")
+
+ggplot(lobster, aes(x = MONTH, y = COUNT ))+
+  geom_col()
+
+ggplot(lobster, aes(x = SITE, y = COUNT))+
+  geom_col()
+
+ggplot(lobster, aes(x = SITE, y = SIZE))+
+  geom_col()
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+
+
+
