@@ -12,29 +12,43 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, include=FALSE}
 library(tidyverse)
 library(knitr)
-lobster<-read_csv("lobster_size_abundance.csv")
-lobster
+lobster_size_abundance<-read_csv("lobster_size_abundance.csv")
+lobster_traps<- read_csv("lobster_traps (1).csv")
+
 #read in tidyverse and knitr packeges (what other packages do you think we will need?)
-#load data and names it "lobster"
+#load data for lobster size and abundance and name it "lobster_size_abundance" 
+#load data for lobster fishing pressure and name it "lobster_traps"
 
 ```
 
 ##1. Lobster abundance and fishing pressure
+```{r}
+#basic data wrangling
+#took out the -99999 values out of lobster_size_abundance under size because this means it was not recorded
+#chnaged numeric month (i.e 8=Aug) to three letter month abbreviation
+#change numerical months in "lobster_traps" to three letter abbreviation
+lobster_1<- lobster_size_abundance %>% 
+  filter(SIZE != -99999) 
+  
+lobster_1$MONTH<- (month.abb[lobster_1$MONTH])
+
+lobster_traps$MONTH<- (month.abb[lobster_traps$MONTH])
+```
 
 
 ```{r}
 #exploratory graphs relating size and count to site and date/ year
 #Considering changing names of months and sites
-ggplot(lobster, aes(x = COUNT, y = SITE ))+
+ggplot(lobster_1, aes(x = SITE, y = COUNT ))+
   geom_point(color = "blue")
 
-ggplot(lobster, aes(x = MONTH, y = COUNT ))+
+ggplot(lobster_1, aes(x = MONTH, y = COUNT ))+
   geom_col()
 
-ggplot(lobster, aes(x = SITE, y = COUNT))+
+ggplot(lobster_1, aes(x = SITE, y = COUNT))+
   geom_col()
 
-ggplot(lobster, aes(x = SITE, y = SIZE))+
+ggplot(lobster_1, aes(x = SITE, y = SIZE))+
   geom_col()
 
 ```
