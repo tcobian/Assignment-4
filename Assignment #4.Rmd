@@ -24,32 +24,41 @@ lobster_traps<- read_csv("lobster_traps (1).csv")
 ##1. Lobster abundance and fishing pressure
 ```{r}
 #basic data wrangling
-#took out the -99999 values out of lobster_size_abundance under size because this means it was not recorded
-#chnaged numeric month (i.e 8=Aug) to three letter month abbreviation
-#change numerical months in "lobster_traps" to three letter abbreviation
+lobster_traps_1<-lobster_traps %>% 
+  select(YEAR,SITE,TRAPS) %>% 
+  filter(SITE == "AQUE" | SITE == "CARP" | SITE == "IVEE" | SITE == "MOHK" | SITE == "NAPL")
+
+#just keep Year Site and Trap data
+
 lobster_1<- lobster_size_abundance %>% 
-  filter(SIZE != -99999) 
+  filter(SIZE != -99999) %>% 
+  select(SITE,YEAR,MONTH,SIZE,COUNT) 
+#took out the -99999 values out of lobster_size_abundance under size because this means it was not recorded
+#Only kept Year, Month, Size and Count data
   
 lobster_1$MONTH<- (month.abb[lobster_1$MONTH])
+#change numerical months in "lobster_1" to three letter abbreviation
 
 lobster_traps$MONTH<- (month.abb[lobster_traps$MONTH])
+#change numerical months in "lobster_traps" to three letter abbreviation
 ```
 
 
 ```{r}
-#exploratory graphs relating size and count to site and date/ year
-#Considering changing names of months and sites
-ggplot(lobster_1, aes(x = SITE, y = COUNT ))+
-  geom_point(color = "blue")
+#graph for each site relating count to year
+abundance_graph<-ggplot(lobster_1, aes(x = YEAR, y = COUNT))+
+  geom_point(aes(color = COUNT))+
+  facet_wrap(~SITE, scales = "free")+
+  theme_classic()
+abundance_graph
 
-ggplot(lobster_1, aes(x = MONTH, y = COUNT ))+
-  geom_col()
+#graph relating fishing pressure (number of traps) for each site by year
 
-ggplot(lobster_1, aes(x = SITE, y = COUNT))+
-  geom_col()
-
-ggplot(lobster_1, aes(x = SITE, y = SIZE))+
-  geom_col()
+pressure_graph<- ggplot(lobster_traps_1, aes(x = YEAR, y = TRAPS))+
+  geom_point(aes(color = TRAPS))+
+  facet_wrap(~SITE, scales = "free")+
+  theme_classic()
+pressure_graph
 
 ```
 
