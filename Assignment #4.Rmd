@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, include=FALSE}
 library(tidyverse)
 library(knitr)
+library(plotly)
 lobster_size_abundance<-read_csv("lobster_size_abundance.csv")
 lobster_traps<- read_csv("lobster_traps (1).csv")
 
@@ -47,18 +48,23 @@ lobster_traps$MONTH<- (month.abb[lobster_traps$MONTH])
 ```{r}
 #graph for each site relating count to year
 abundance_graph<-ggplot(lobster_1, aes(x = YEAR, y = COUNT))+
-  geom_point(aes(color = COUNT))+
+  geom_point(aes(color = COUNT), show.legend = "false", alpha = 0.5)+
   facet_wrap(~SITE, scales = "free")+
+  scale_y_continuous(name = "number of lobsters", limits = c(0,25))+
   theme_classic()
 abundance_graph
+ggplotly(abundance_graph)
+
 
 #graph relating fishing pressure (number of traps) for each site by year
 
 pressure_graph<- ggplot(lobster_traps_1, aes(x = YEAR, y = TRAPS))+
-  geom_point(aes(color = TRAPS))+
+  geom_point(aes(color = TRAPS), show.legend = "false", alpha = 0.5)+
   facet_wrap(~SITE, scales = "free")+
+  scale_y_continuous(name = "number of traps", limits = c(0,25))+
   theme_classic()
 pressure_graph
+ggplotly(pressure_graph)
 
 ```
 
