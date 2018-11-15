@@ -102,8 +102,11 @@ lobster_levene
 #The variances are not equal
 
 # Run ANOVA to see if means are equal
+class(lobster_2$SIZE)
+unique(lobster_2$SITE)
 
 lobster_ANOVA<- aov(SITE ~ SIZE, data = lobster_2) 
+lobster_ANOVA
 
 #table with the results of  ANOVA
 
@@ -129,9 +132,9 @@ site_summary<- lobster_2 %>%
             mean = mean(SIZE))
 site_summary
 
-lobster_bar<- ggplot(site_summary, aes(x = SITE, y = mean))+
+lobster_bar<- ggplot(lobster_2, aes(x = SITE, y = SIZE))+
   geom_col()+
-  geom_errorbar(aes(ymin = mean-sd, ymax = mean+sd))
+  geom_errorbar(aes(ymin = mean-sd, ymax = sd+sd))
 lobster_bar
 # ask in office hours why ANOVA and Tukey says means are different but graph of means by site looks similar
 
@@ -142,6 +145,7 @@ lobster_bar
 
 ```{r}
 # create a data fram for only 2012 ann 2017
+# at the end create a bar or col graph comparing 2017 and 2012 values at each site
 lobster_3<- lobster_2 %>% 
   filter(YEAR == 2012 | YEAR == 2017)
 lobster_3
@@ -149,10 +153,23 @@ lobster_3
 mpa<- lobster_3 %>% 
   filter(SITE == "IVEE" | SITE == "NAPL")
 
+############# Tests for IVEE
 mpa_IVEE<- mpa %>% 
-  filter(SITE == "IVEE") %>% 
-  spread(SIZE,YEAR)
+  filter(SITE == "IVEE") 
 mpa_IVEE
+
+
+IVEE_test<- mpa_IVEE %>% 
+  t.test(SIZE~YEAR, data = .)
+IVEE_test
+
+############ Tests for NAPL
+
+
+
+
+
+
 
 
 # I was able to perform a t.test for the two mpa sites between year 2012 and 2017, I dont know if this is what we need Gage had said something about doing 5 seperate t.tests for each site between the two years
