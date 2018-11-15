@@ -18,6 +18,7 @@ library(vcdExtra)
 library(car)
 library(onewaytests)
 library(kableExtra)
+library(xtable)
 lobster_size_abundance<-read_csv("lobster_size_abundance.csv")
 lobster_traps<- read_csv("lobster_traps (1).csv")
 
@@ -104,6 +105,9 @@ lobster_levene
 
 lobster_ANOVA<- aov(SITE ~ SIZE, data = lobster_2) 
 
+#table with the results of  ANOVA
+
+
 summary(lobster_ANOVA)
 
 # reject null hypothesis, at least two samples are from sites with different means
@@ -152,8 +156,13 @@ mpa_IVEE<- mpa %>%
 mpa_IVEE
 
 
-mpa_t-test<- t.test()
+# I was able to perform a t.test for the two mpa sites between year 2012 and 2017, I dont know if this is what we need Gage had said something about doing 5 seperate t.tests for each site between the two years
 
+mpa_testt<- mpa %>% 
+  t.test(SIZE~YEAR, data = . , var.equal = TRUE)
+mpa_testt
+
+# p-value = 0.056 so means do not differ significantly between the two years.
 
 ```
 
