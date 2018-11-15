@@ -13,6 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(knitr)
 library(plotly)
+install.packages("vcdExtra")
+library(vcdExtra)
 lobster_size_abundance<-read_csv("lobster_size_abundance.csv")
 lobster_traps<- read_csv("lobster_traps (1).csv")
 
@@ -73,11 +75,13 @@ ggplotly(pressure_graph)
 
 ```{r}
 #Use lobster_1 df for mean size data
+# Use and ANOVA
+# maybe a posthoc test
 
-
-
-
-
+lobster_2<- lobster_1 %>% 
+  as.data.frame() %>%
+  expand.dft(freq = "COUNT")
+experiment_lobster
 
 
 
