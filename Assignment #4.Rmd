@@ -101,7 +101,7 @@ lobster_levene
 
 # Run ANOVA to see if means are equal
 
-lobster_ANOVA<- aov(SIZE ~ SITE, data = lobster_2) 
+lobster_ANOVA<- aov(SITE ~ SIZE, data = lobster_2) 
 
 summary(lobster_ANOVA)
 
@@ -129,9 +129,53 @@ lobster_bar<- ggplot(site_summary, aes(x = SITE, y = mean))+
   geom_col()+
   geom_errorbar(aes(ymin = mean-sd, ymax = mean+sd))
 lobster_bar
+# ask in office hours why ANOVA and Tukey says means are different but graph of means by site looks similar
+
+```
+
+
+3. Changes in lobster size at MPA and non MPA sites (comparing only 2012 and 2017 sizes)
+
+```{r}
+# create a data fram for only 2012 ann 2017
+lobster_3<- lobster_2 %>% 
+  filter(YEAR == 2012 | YEAR == 2017)
+lobster_3
+
+mpa<- lobster_3 %>% 
+  filter(SITE == "IVEE" | SITE == "NAPL")
+
+mpa_IVEE<- mpa %>% 
+  filter(SITE == "IVEE") %>% 
+  spread(SIZE,YEAR)
+mpa_IVEE
+
+
+mpa_t-test<- t.test()
 
 
 ```
+
+
+4. Proportions of "legal" lobsters at the 5 sites in 2017
+
+```{r}
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
