@@ -82,7 +82,8 @@ ggplotly(pressure_graph)
 
 lobster_2<- lobster_1 %>% 
   as.data.frame() %>%
-  expand.dft(freq = "COUNT")
+  expand.dft(freq = "COUNT") 
+
 lobster_2
 
 variance<- lobster_2 %>% 
@@ -115,9 +116,19 @@ lobster_hsd
 # IVEE and AQUE are not different
 # IVEE and CARP are not different
 
+# create a graphic to show differences in means
 
+#finding sd to put in error bars in graph
+site_summary<- lobster_2 %>% 
+  group_by(SITE) %>% 
+  summarize(sd = sd(SIZE),
+            mean = mean(SIZE))
+site_summary
 
-
+lobster_bar<- ggplot(site_summary, aes(x = SITE, y = mean))+
+  geom_col()+
+  geom_errorbar(aes(ymin = mean-sd, ymax = mean+sd))
+lobster_bar
 
 
 ```
