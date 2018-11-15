@@ -107,7 +107,6 @@ lobster_ANOVA<- aov(SITE ~ SIZE, data = lobster_2)
 
 #table with the results of  ANOVA
 
-
 summary(lobster_ANOVA)
 
 # reject null hypothesis, at least two samples are from sites with different means
