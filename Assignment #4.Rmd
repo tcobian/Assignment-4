@@ -15,6 +15,8 @@ library(knitr)
 library(plotly)
 install.packages("vcdExtra")
 library(vcdExtra)
+library(car)
+library(onewaytests)
 lobster_size_abundance<-read_csv("lobster_size_abundance.csv")
 lobster_traps<- read_csv("lobster_traps (1).csv")
 
@@ -81,7 +83,40 @@ ggplotly(pressure_graph)
 lobster_2<- lobster_1 %>% 
   as.data.frame() %>%
   expand.dft(freq = "COUNT")
-experiment_lobster
+lobster_2
+
+variance<- lobster_2 %>% 
+  group_by(SITE) %>% 
+  summarize(variance = var(SIZE))
+variance
+
+#This shows that the lowest variance is less than 4  times smaller than the largest variance, so we can use a one way ANOVA
+
+#Do an Levene test to see if variances are equal
+lobster_levene<- leveneTest(SIZE ~ SITE, data = lobster_2)
+lobster_levene
+
+#The variances are not equal
+
+# Run ANOVA to see if means are equal
+
+lobster_ANOVA<- aov(SIZE ~ SITE, data = lobster_2) 
+
+summary(lobster_ANOVA)
+
+# reject null hypothesis, at least two samples are from sites with different means
+
+# Use Tukeyhsd to find out which means are different
+
+lobster_hsd<- TukeyHSD(lobster_ANOVA)
+lobster_hsd
+
+# CARP and AQUE are not different
+# IVEE and AQUE are not different
+# IVEE and CARP are not different
+
+
+
 
 
 
