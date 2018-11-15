@@ -160,7 +160,18 @@ mpa_t-test<- t.test()
 4. Proportions of "legal" lobsters at the 5 sites in 2017
 
 ```{r}
+lobster_4<- lobster_2 %>% 
+  count(SITE,SIZE) %>% 
+  spread(SIZE,n)
+# we need to try and make a df that has eaxh site and the amount of lobsters above and below th elegal limit
 
+experiment<- lobster_2 %>% 
+  mutate(legal = case_when(SIZE>=82.6 ~ "yes", SIZE<82.6 ~ "no")) %>% 
+  count(SITE,legal) %>% 
+  spread(legal,n)
+experiment
+
+lobster_4
 
 
 
