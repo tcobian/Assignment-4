@@ -69,6 +69,19 @@ ggplotly(pressure_graph)
 ```
 
 
+2. Compare mean lobster size by site in 2017
+
+```{r}
+#Use lobster_1 df for mean size data
+
+
+
+
+
+
+
+
+```
 
 
 
