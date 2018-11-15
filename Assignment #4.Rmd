@@ -17,6 +17,7 @@ install.packages("vcdExtra")
 library(vcdExtra)
 library(car)
 library(onewaytests)
+library(kableExtra)
 lobster_size_abundance<-read_csv("lobster_size_abundance.csv")
 lobster_traps<- read_csv("lobster_traps (1).csv")
 
@@ -173,11 +174,25 @@ legal_counts<- lobster_2 %>%
 rownames(legal_counts)<-c("AQUE","CARP","IVEE","MOHK","NAPL")
 legal_counts
 
+#make a kable table for the legal_counts data
+
+legal_counts_table<-kable(legal_counts,
+      caption = "Amount of lobsters over legal size 82.6mm at each site") %>% 
+  kable_styling(c("striped", "border"))
+legal_counts_table
 # perform a chi-square to test for independance
 
 legal_prop<- prop.table(as.matrix(legal_counts), 1)
 legal_prop
 
+legal_prop_table<- kable(legal_prop, 
+                         caption = "Proportion of lobsters that are over legal size at each site") %>% 
+  kable_styling(c("striped", "border"))
+legal_prop_table
+
+
+# perform a chi-square to see if there is an association between site and size of lobster
+# results tell us there is p - value is close to zero
 lobster_x2<- chisq.test(legal_counts)
 lobster_x2
 
