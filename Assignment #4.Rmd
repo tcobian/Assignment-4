@@ -165,13 +165,25 @@ lobster_4<- lobster_2 %>%
   spread(SIZE,n)
 # we need to try and make a df that has eaxh site and the amount of lobsters above and below th elegal limit
 
-experiment<- lobster_2 %>% 
+legal_counts<- lobster_2 %>% 
   mutate(legal = case_when(SIZE>=82.6 ~ "yes", SIZE<82.6 ~ "no")) %>% 
   count(SITE,legal) %>% 
-  spread(legal,n)
-experiment
+  spread(legal,n) %>% 
+  select(-SITE)
+rownames(legal_counts)<-c("AQUE","CARP","IVEE","MOHK","NAPL")
+legal_counts
 
-lobster_4
+# perform a chi-square to test for independance
+
+legal_prop<- prop.table(as.matrix(legal_counts), 1)
+legal_prop
+
+lobster_x2<- chisq.test(legal_counts)
+lobster_x2
+
+
+
+
 
 
 
