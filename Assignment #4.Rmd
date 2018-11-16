@@ -316,6 +316,15 @@ IVEE_ttest
 
 # t = -1.885, P-value = 0.0599 (mean 2012 = 66.08, mean 2017 = 71.45). Retain the null no significant difference. 
 
+# Mann-Whitney U because the graphs weren't totally convincing that normality was met. 
+# HO: Ranks are equal (medians are equal)
+# HA: Ranks are NOT equal
+
+IVEE_mwu <- wilcox.test(mpa_2012$IVEE, mpa_2017$IVEE, var.equal = TRUE)
+IVEE_mwu
+
+# W = 5482, p-value = 0.008488  (This is signficant but the t-test is not, we should think about this)
+
 # Calculate actual differences in mean size between 2012 and 2017
 IVEE_mean_2012 <- mean(mpa_2012$IVEE, na.rm = TRUE)
 IVEE_mean_2017 <- mean(mpa_2017$IVEE, na.rm = TRUE)
