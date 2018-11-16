@@ -21,6 +21,7 @@ library(kableExtra)
 library(xtable)
 library(multcompView)
 library(RColorBrewer)
+library(effsize)
 lobster_size_abundance<-read_csv("lobster_size_abundance.csv")
 lobster_traps<- read_csv("lobster_traps (1).csv")
 
@@ -74,6 +75,7 @@ pressure_graph<- ggplot(lobster_traps_1, aes(x = YEAR, y = TRAPS))+
 pressure_graph
 ggplotly(pressure_graph)
 
+
 ```
 
 
@@ -96,21 +98,22 @@ lobster_levene
 
 #The variances are not equal. Look at actual variances to determine if ANOVA can still be used. 
 
-<<<<<<< HEAD
 variance<- lobster_2 %>% 
   group_by(SITE) %>% 
   summarize(variance = var(SIZE))
 variance
 
 # This shows that the lowest variance is less than 4  times smaller than the largest variance, so we can use a one way ANOVA
-=======
+
+
 # Run ANOVA to see if means are equal
 class(lobster_2$SIZE)
 unique(lobster_2$SITE)
 
 lobster_ANOVA<- aov(SITE ~ SIZE, data = lobster_2) 
 lobster_ANOVA
->>>>>>> 25c387cea9908cda74feae8a1f021543ef97be44
+
+
 
 # Run ANOVA to test for differences in means across groups
 # HO: Means across all sites are equal
@@ -139,7 +142,6 @@ site_summary<- lobster_2 %>%
             mean = mean(SIZE))
 site_summary
 
-<<<<<<< HEAD
 # This column graph has letters above for sites that DID NOT differ signficantly. Not sure if this is the right way to do this though. 
 
 lobster_col <- ggplot(site_summary, aes(x = SITE, y = mean)) +
@@ -147,9 +149,11 @@ lobster_col <- ggplot(site_summary, aes(x = SITE, y = mean)) +
   geom_errorbar(aes(ymin =mean - sd, ymax = mean + sd), color = "gray0", width = .3) +
   scale_y_continuous(expand = c(0,0), limits = c(0,100)) +
   scale_x_discrete(labels = c("Arroyo Quemado","Carpinteria","Isla Vista","Mohawk Reef","Naples Reef")) +
-  annotate("text", x = 1, y = 89, label = "a", family = "Times New Roman") +
-  annotate("text", x = 2, y = 89, label = "a", family = "Times New Roman") +
-  annotate("text", x = 3, y = 90, label = "a", family = "Times New Roman") +
+  annotate("text", x = 1, y = 89, label = "A", family = "Times New Roman") +
+  annotate("text", x = 2, y = 89, label = "A", family = "Times New Roman") +
+  annotate("text", x = 3, y = 90, label = "A", family = "Times New Roman") +
+  annotate("text", x = 4, y = 86, label = "B", family = "Times New Roman") +
+  annotate("text", x = 5, y = 93, label = "C", family = "Times New Roman") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         panel.background = element_blank(), axis.line = element_line(colour = "black"),text = element_text(family = "Times New Roman"))+
   xlab("\n Long-Term Ecological Research Site")+
@@ -166,20 +170,18 @@ lobster_box <- ggplot(lobster_2, aes(x = SITE, y = SIZE))+
   ylab("Mean Lobster Carapace Length (mm)") +
   scale_y_continuous(expand = c(0,0), limits = c(0,175)) +
   scale_x_discrete(labels = c("Arroyo Quemado","Carpinteria","Isla Vista","Mohawk Reef","Naples Reef")) +
-  annotate("text", x = 1, y = 115, label = "a", family = "Times New Roman") +
-  annotate("text", x = 2, y = 170, label = "a", family = "Times New Roman") +
-  annotate("text", x = 3, y = 160, label = "a", family = "Times New Roman")
+  annotate("text", x = 1, y = 115, label = "A", family = "Times New Roman") +
+  annotate("text", x = 2, y = 170, label = "A", family = "Times New Roman") +
+  annotate("text", x = 3, y = 160, label = "A", family = "Times New Roman") +
+  annotate("text", x = 4, y = 120, label = "B", family = "Times New Roman") +
+  annotate("text", x = 5, y = 140, label = "C", family = "Times New Roman")
 
 lobster_box
 
 # I don't know about the boxplot guys it looks kind of weird with the numbers above it but at the same time I think boxplot looks better than the graph in terms of actually representing the data. I can try and find out how to put the p-values on it instead. 
-=======
-lobster_bar<- ggplot(lobster_2, aes(x = SITE, y = SIZE))+
-  geom_col()+
-  geom_errorbar(aes(ymin = mean-sd, ymax = sd+sd))
-lobster_bar
-# ask in office hours why ANOVA and Tukey says means are different but graph of means by site looks similar
->>>>>>> 25c387cea9908cda74feae8a1f021543ef97be44
+
+
+
 
 ```
 
@@ -222,7 +224,368 @@ mpa_testt<- mpa %>%
 mpa_testt
 
 # p-value = 0.056 so means do not differ significantly between the two years.
+###############################################
+# Tyler I'm trying something new down here that I got from Maddie:
 
+# Create mpa dataframe
+
+mpa <- c("IVEE", "NAPL") 
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
+# Filter mpa dataframe for years 2012 and 2017
+
+mpa_site <- lobster_2 %>%
+  filter(SITE %in% mpa, YEAR == 2012|YEAR == 2017) %>%
+  select(SITE,YEAR,SIZE)
+
+# Filter non-mpa dataframe for years 2012 and 2017
+
+non_mpa_site <- lobster_2 %>%
+  filter(SITE %!in% mpa, YEAR==2012|YEAR==2017) %>%
+  select(SITE,YEAR,SIZE)
+
+#####################################
+
+# Create 4 dataframes for MPA/Non-MPA each year
+
+mpa_2012 <- lobster_2 %>%
+  filter(SITE %in% mpa, YEAR == 2012) %>%
+  select(SITE,YEAR,SIZE) %>%
+  mutate( i = row_number()) %>%
+  spread(SITE,SIZE) %>%
+  select(-i)
+
+mpa_2017 <- lobster_2 %>%
+  filter(SITE %in% mpa, YEAR == 2017) %>%
+  select(SITE,YEAR,SIZE) %>%
+  mutate( i = row_number()) %>%
+  spread(SITE,SIZE) %>%
+  select(-i)
+
+non_mpa_2012 <- lobster_2 %>%
+  filter(SITE %!in% mpa, YEAR == 2012) %>%
+  select(SITE,YEAR,SIZE) %>%
+  mutate( i = row_number()) %>%
+  spread(SITE,SIZE) %>%
+  select(-i)
+
+non_mpa_2017 <- lobster_2 %>%
+  filter(SITE %!in% mpa, YEAR == 2017) %>%
+  select(SITE,YEAR,SIZE) %>%
+  mutate( i = row_number()) %>%
+  spread(SITE,SIZE) %>%
+  select(-i)
+
+################################################
+## MPA Site: IVEE
+
+# Exploratory graphs to check for normality 
+### Histogram:
+
+k <- 2*((NROW(na.omit(mpa_2012$IVEE)))^(1/3))
+
+mpa_hist <- ggplot(mpa_2012, aes(x = IVEE)) +
+  geom_histogram(bins = k) +
+  theme_classic() +
+  scale_x_continuous(expand = c(0,0)) +
+  scale_y_continuous (expand = c(0,0))
+mpa_hist
+
+### QQ
+
+mpa_qq <- ggplot(mpa_2012, aes(sample = IVEE)) +
+  geom_qq() 
+mpa_qq
+
+## Data doesn't look very normal. Potentially run Mann-Whitney U instead. 
+
+# F-test for equal variances between 2012 and 2017
+# H0: The variances are equal (ratio of variances = 1)
+# HA: The variances are not equal (ratio of variances ≠ 1)
+
+IVEE_ftest <- var.test(mpa_2012$IVEE, mpa_2017$IVEE)
+IVEE_ftest
+
+# Retain null of equal variances: p-value = 0.307. Override the var.equal = FALSE for t-test
+
+# T-test to compare mean lobster size between 2012 and 2017
+# H0: mean Lobster size at IVEE site in 2012 is equal to mean lobster size at IVEE site in 2017
+# HA: mean Lobster size at IVEE site in 2012 is NOT equal to mean lobster size at IVEE site in 2017
+IVEE_ttest <- t.test(mpa_2012$IVEE, mpa_2017$IVEE, var.equal = TRUE)
+IVEE_ttest
+
+# t = -1.885, P-value = 0.0599 (mean 2012 = 66.08, mean 2017 = 71.45). Retain the null no significant difference. 
+
+# Calculate actual differences in mean size between 2012 and 2017
+IVEE_mean_2012 <- mean(mpa_2012$IVEE, na.rm = TRUE)
+IVEE_mean_2017 <- mean(mpa_2017$IVEE, na.rm = TRUE)
+IVEE_mean_2017 - IVEE_mean_2012
+# Differences in means in 5.375
+
+# Calculate effect size (Cohen's d)
+IVEE_cohen_d <- cohen.d(mpa_2012$IVEE, mpa_2017$IVEE, na.rm = TRUE)
+IVEE_cohen_d
+
+# Effect size is small Cohen's d is (-0.3775)
+
+# Sd and Sample Size for reporting 2012:
+sd(mpa_2012$IVEE, na.rm = TRUE)
+length(mpa_2012$IVEE[!is.na(mpa_2012$IVEE)])
+# Sd = 12.092, n = 26
+
+# Sd and Sample Size for reporting 2017:
+sd(mpa_2017$IVEE, na.rm = TRUE)
+length(mpa_2017$IVEE[!is.na(mpa_2017$IVEE)])
+# Sd = 14.32, n = 606
+
+########################################################
+
+## MPA Site: NAPL
+
+# Exploratory graphs to check for normality 
+### Histogram:
+
+k <- 2*((NROW(na.omit(mpa_2012$NAPL)))^(1/3))
+
+mpa_hist_2 <- ggplot(mpa_2012, aes(x = NAPL)) +
+  geom_histogram(bins = k) +
+  theme_classic() +
+  scale_x_continuous(expand = c(0,0)) +
+  scale_y_continuous (expand = c(0,0))
+mpa_hist_2
+
+### QQ
+
+mpa_qq_2 <- ggplot(mpa_2012, aes(sample = NAPL)) +
+  geom_qq() 
+mpa_qq_2
+
+## Data looks mostly normal - but its borderline  
+
+# F-test for equal variances between 2012 and 2017
+# H0: The variances are equal (ratio of variances = 1)
+# HA: The variances are not equal (ratio of variances ≠ 1)
+
+NAPL_ftest <- var.test(mpa_2012$NAPL, mpa_2017$NAPL)
+NAPL_ftest
+
+# Retain null of equal variances: p-value = 0.7685. Override the var.equal = FALSE for t-test
+
+# T-test to compare mean lobster size between 2012 and 2017
+# H0: mean Lobster size at NAPL site in 2012 is equal to mean lobster size at NAPL site in 2017
+# HA: mean Lobster size at NAPL site in 2012 is NOT equal to mean lobster size at NAPL site in 2017
+NAPL_ttest <- t.test(mpa_2012$NAPL, mpa_2017$NAPL, var.equal = TRUE)
+NAPL_ttest
+
+# t = -0.676, P-value = 0.5002 (mean 2012 = 73.00, mean 2017 = 76.23). Retain the null no significant difference. 
+
+# Calculate actual differences in mean size between 2012 and 2017
+NAPL_mean_2012 <- mean(mpa_2012$NAPL, na.rm = TRUE)
+NAPL_mean_2017 <- mean(mpa_2017$NAPL, na.rm = TRUE)
+NAPL_mean_2017 - NAPL_mean_2012
+# Differences in means in 3.232
+
+# Calculate effect size (Cohen's d)
+NAPL_cohen_d <- cohen.d(mpa_2012$NAPL, mpa_2017$NAPL, na.rm = TRUE)
+NAPL_cohen_d
+
+# Effect size is small Cohen's d is (-0.2834)
+
+# Sd and Sample Size for reporting 2012:
+sd(mpa_2012$NAPL, na.rm = TRUE)
+length(mpa_2012$NAPL[!is.na(mpa_2012$NAPL)])
+# Sd = 11.747, n = 6
+
+# Sd and Sample Size for reporting 2017:
+sd(mpa_2017$NAPL, na.rm = TRUE)
+length(mpa_2017$NAPL[!is.na(mpa_2017$NAPL)])
+# Sd = 11.39, n = 112
+
+########################################################
+## Non-MPA Site: AQUE
+
+# Exploratory graphs to check for normality 
+### Histogram:
+
+k <- 2*((NROW(na.omit(non_mpa_2012$AQUE)))^(1/3))
+
+non_mpa_hist <- ggplot(non_mpa_2012, aes(x = AQUE)) +
+  geom_histogram(bins = k) +
+  theme_classic() +
+  scale_x_continuous(expand = c(0,0)) +
+  scale_y_continuous (expand = c(0,0))
+non_mpa_hist
+
+### QQ
+
+non_mpa_qq <- ggplot(non_mpa_2012, aes(sample = AQUE)) +
+  geom_qq() 
+non_mpa_qq
+
+## Data looks mostly normal   
+
+# F-test for equal variances between 2012 and 2017
+# H0: The variances are equal (ratio of variances = 1)
+# HA: The variances are not equal (ratio of variances ≠ 1)
+
+AQUE_ftest <- var.test(non_mpa_2012$AQUE, non_mpa_2017$AQUE)
+AQUE_ftest
+
+# Retain null of equal variances: p-value = 0.2986. Override the var.equal = FALSE for t-test
+
+# T-test to compare mean lobster size between 2012 and 2017
+# H0: mean Lobster size at AQUE site in 2012 is equal to mean lobster size at AQUE site in 2017
+# HA: mean Lobster size at AQUE site in 2012 is NOT equal to mean lobster size at AQUE site in 2017
+AQUE_ttest <- t.test(non_mpa_2012$AQUE, non_mpa_2017$AQUE, var.equal = TRUE)
+AQUE_ttest
+
+# t = -1.262, P-value = 0.2097 (mean 2012 = 71.00, mean 2017 = 73.90). Retain the null no significant difference. 
+
+# Calculate actual differences in mean size between 2012 and 2017
+AQUE_mean_2012 <- mean(non_mpa_2012$AQUE, na.rm = TRUE)
+AQUE_mean_2017 <- mean(non_mpa_2017$AQUE, na.rm = TRUE)
+AQUE_mean_2017 - AQUE_mean_2012
+# Differences in means in 2.900
+
+# Calculate effect size (Cohen's d)
+AQUE_cohen_d <- cohen.d(non_mpa_2012$AQUE, non_mpa_2017$AQUE, na.rm = TRUE)
+AQUE_cohen_d
+
+# Effect size is small Cohen's d is (-0.2563)
+
+# Sd and Sample Size for reporting 2012:
+sd(non_mpa_2012$AQUE, na.rm = TRUE)
+length(non_mpa_2012$AQUE[!is.na(non_mpa_2012$AQUE)])
+# Sd = 10.150, n = 38
+
+# Sd and Sample Size for reporting 2017:
+sd(non_mpa_2017$AQUE, na.rm = TRUE)
+length(non_mpa_2017$AQUE[!is.na(non_mpa_2017$AQUE)])
+# Sd = 11.89, n = 67
+
+######################################################
+## Non-MPA Site: CARP
+
+# Exploratory graphs to check for normality 
+### Histogram:
+
+k <- 2*((NROW(na.omit(non_mpa_2012$CARP)))^(1/3))
+
+non_mpa_hist_2 <- ggplot(non_mpa_2012, aes(x = CARP)) +
+  geom_histogram(bins = k) +
+  theme_classic() +
+  scale_x_continuous(expand = c(0,0)) +
+  scale_y_continuous (expand = c(0,0))
+non_mpa_hist_2
+
+### QQ
+
+non_mpa_qq_2 <- ggplot(non_mpa_2012, aes(sample = CARP)) +
+  geom_qq() 
+non_mpa_qq_2
+
+## Data looks mostly normal   
+
+# F-test for equal variances between 2012 and 2017
+# H0: The variances are equal (ratio of variances = 1)
+# HA: The variances are not equal (ratio of variances ≠ 1)
+
+CARP_ftest <- var.test(non_mpa_2012$CARP, non_mpa_2017$CARP)
+CARP_ftest
+
+# Retain null of equal variances: p-value = 0.2043. Override the var.equal = FALSE for t-test
+
+# T-test to compare mean lobster size between 2012 and 2017
+# H0: mean Lobster size at CARP site in 2012 is equal to mean lobster size at CARP site in 2017
+# HA: mean Lobster size at CARP site in 2012 is NOT equal to mean lobster size at CARP site in 2017
+CARP_ttest <- t.test(non_mpa_2012$CARP, non_mpa_2017$CARP, var.equal = TRUE)
+CARP_ttest
+
+# t = 1.336, P-value = 0.1819 (mean 2012 = 74.36, mean 2017 = 72.23). Retain the null no significant difference. 
+
+# Calculate actual differences in mean size between 2012 and 2017
+CARP_mean_2012 <- mean(non_mpa_2012$CARP, na.rm = TRUE)
+CARP_mean_2017 <- mean(non_mpa_2017$CARP, na.rm = TRUE)
+CARP_mean_2017 - CARP_mean_2012
+# Differences in means in -2.13 (SMALLER IN 2017 THAN 2012)
+
+# Calculate effect size (Cohen's d)
+CARP_cohen_d <- cohen.d(non_mpa_2012$CARP, non_mpa_2017$CARP, na.rm = TRUE)
+CARP_cohen_d
+
+# Effect size is negligible Cohen's d is (0.1594)
+
+# Sd and Sample Size for reporting 2012:
+sd(non_mpa_2012$CARP, na.rm = TRUE)
+length(non_mpa_2012$CARP[!is.na(non_mpa_2012$CARP)])
+# Sd = 14.616, n = 78
+
+# Sd and Sample Size for reporting 2017:
+sd(non_mpa_2017$CARP, na.rm = TRUE)
+length(non_mpa_2017$CARP[!is.na(non_mpa_2017$CARP)])
+# Sd = 13.209, n = 705
+
+###################################################
+## Non-MPA Site: MOHK
+
+# Exploratory graphs to check for normality 
+### Histogram:
+
+k <- 2*((NROW(na.omit(non_mpa_2012$MOHK)))^(1/3))
+
+non_mpa_hist_3 <- ggplot(non_mpa_2012, aes(x = MOHK)) +
+  geom_histogram(bins = k) +
+  theme_classic() +
+  scale_x_continuous(expand = c(0,0)) +
+  scale_y_continuous (expand = c(0,0))
+non_mpa_hist_3
+
+### QQ
+
+non_mpa_qq_3 <- ggplot(non_mpa_2012, aes(sample = MOHK)) +
+  geom_qq() 
+non_mpa_qq_3
+
+## Data looks mostly normal   
+
+# F-test for equal variances between 2012 and 2017
+# H0: The variances are equal (ratio of variances = 1)
+# HA: The variances are not equal (ratio of variances ≠ 1)
+
+MOHK_ftest <- var.test(non_mpa_2012$MOHK, non_mpa_2017$MOHK)
+MOHK_ftest
+
+# Retain null of equal variances: p-value = 0.1509. Override the var.equal = FALSE for t-test
+
+# T-test to compare mean lobster size between 2012 and 2017
+# H0: mean Lobster size at MOHK site in 2012 is equal to mean lobster size at MOHK site in 2017
+# HA: mean Lobster size at MOHK site in 2012 is NOT equal to mean lobster size at MOHK site in 2017
+MOHK_ttest <- t.test(non_mpa_2012$MOHK, non_mpa_2017$MOHK, var.equal = TRUE)
+MOHK_ttest
+
+# t = 4.069, P-value < 0.001 (mean 2012 = 77.25, mean 2017 = 72.00). SIGNIFICANT DIFFERENCE
+
+# Calculate actual differences in mean size between 2012 and 2017
+MOHK_mean_2012 <- mean(non_mpa_2012$MOHK, na.rm = TRUE)
+MOHK_mean_2017 <- mean(non_mpa_2017$MOHK, na.rm = TRUE)
+MOHK_mean_2017 - MOHK_mean_2012
+# Differences in means in -5.25 (SMALLER IN 2017 THAN 2012)
+
+# Calculate effect size (Cohen's d)
+MOHK_cohen_d <- cohen.d(non_mpa_2012$MOHK, non_mpa_2017$MOHK, na.rm = TRUE)
+MOHK_cohen_d
+
+# Effect size is medium Cohen's d is (0.5408)
+
+# Sd and Sample Size for reporting 2012:
+sd(non_mpa_2012$MOHK, na.rm = TRUE)
+length(non_mpa_2012$MOHK[!is.na(non_mpa_2012$MOHK)])
+# Sd = 10.587, n = 83
+
+# Sd and Sample Size for reporting 2017:
+sd(non_mpa_2017$MOHK, na.rm = TRUE)
+length(non_mpa_2017$MOHK[!is.na(non_mpa_2017$MOHK)])
+# Sd = 9.28, n = 178
 ```
 
 
@@ -245,7 +608,7 @@ legal_counts
 #make a kable table for the legal_counts data
 
 legal_counts_table<-kable(legal_counts,
-      caption = "Amount of lobsters over legal size 82.6mm at each site") %>% 
+      caption = "Number of lobsters of legal size (above 82.6mm) and illegal size (below 82.6mm) at each site") %>% 
   kable_styling(c("striped", "border"))
 legal_counts_table
 # perform a chi-square to test for independance
