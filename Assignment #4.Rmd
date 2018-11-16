@@ -32,7 +32,7 @@ lobster_traps<- read_csv("lobster_traps (1).csv")
 ```
 
 ##1. Lobster abundance and fishing pressure
-```{r}
+```{r, echo=FALSE}
 #basic data wrangling
 lobster_traps_1<-lobster_traps %>% 
   select(YEAR,SITE,TRAPS) %>% 
@@ -54,7 +54,7 @@ lobster_traps$MONTH<- (month.abb[lobster_traps$MONTH])
 ```
 
 
-```{r}
+```{r, echo=FALSE}
 #graph for each site relating count to year
 abundance_graph<-ggplot(lobster_1, aes(x = YEAR, y = COUNT))+
   geom_point(aes(color = COUNT), show.legend = "false", alpha = 0.5)+
@@ -81,7 +81,7 @@ ggplotly(pressure_graph)
 
 2. Compare mean lobster size by site in 2017
 
-```{r}
+```{r, echo=FALSE}
 #Use lobster_1 df for mean size data
 # Test for equal variance (levenes) and run an ANOVA
 # maybe a posthoc test
@@ -110,16 +110,11 @@ variance
 class(lobster_2$SIZE)
 unique(lobster_2$SITE)
 
-lobster_ANOVA<- aov(SITE ~ SIZE, data = lobster_2) 
-lobster_ANOVA
-
-
-
 # Run ANOVA to test for differences in means across groups
 # HO: Means across all sites are equal
 #HA: At least two means are not equal
 
-lobster_ANOVA <- aov(SIZE ~SITE, data = lobster_2)
+lobster_ANOVA <- aov(SIZE ~ SITE, data = lobster_2)
 summary(lobster_ANOVA)
 
 # reject null hypothesis, at least two samples are from sites with different means
@@ -188,7 +183,7 @@ lobster_box
 
 3. Changes in lobster size at MPA and non MPA sites (comparing only 2012 and 2017 sizes)
 
-```{r}
+```{r, echo=FALSE}
 # create a data fram for only 2012 ann 2017
 # at the end create a bar or col graph comparing 2017 and 2012 values at each site
 lobster_3<- lobster_2 %>% 
@@ -595,12 +590,30 @@ length(non_mpa_2012$MOHK[!is.na(non_mpa_2012$MOHK)])
 sd(non_mpa_2017$MOHK, na.rm = TRUE)
 length(non_mpa_2017$MOHK[!is.na(non_mpa_2017$MOHK)])
 # Sd = 9.28, n = 178
+
+# Histograms to compare all sites between 2012 and 2017 for size
+
+#Make a df that is the exact same as lobster_2 but grouped by site and only have years 2012 and 2017
+
+grouped_lobster_2<- lobster_2 %>% 
+  group_by(SITE) %>% 
+  filter(YEAR == 2012 | YEAR == 2017) %>% 
+  mutate(mean_size = mean(SIZE)) %>% 
+  select(-SIZE)
+grouped_lobster_2
+  
+# grouped histogram with new grouped_lobster_2 df showing the mean size at each site in year 2012 and 2017
+size_hist<- ggplot(grouped_lobster_2, aes(x = YEAR))+
+  geom_histogram(fill = "olivedrab4")+
+  facet_wrap("SITE", scales = "free")
+size_hist
+
 ```
 
 
 4. Proportions of "legal" lobsters at the 5 sites in 2017
 
-```{r}
+```{r, echo=FALSE}
 lobster_4<- lobster_2 %>% 
   count(SITE,SIZE) %>% 
   spread(SIZE,n)
