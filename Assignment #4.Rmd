@@ -19,6 +19,7 @@ library(car)
 library(onewaytests)
 library(kableExtra)
 library(xtable)
+library(multcompView)
 lobster_size_abundance<-read_csv("lobster_size_abundance.csv")
 lobster_traps<- read_csv("lobster_traps (1).csv")
 
@@ -79,7 +80,7 @@ ggplotly(pressure_graph)
 
 ```{r}
 #Use lobster_1 df for mean size data
-# Use and ANOVA
+# Test for equal variance (levenes) and run an ANOVA
 # maybe a posthoc test
 
 lobster_2<- lobster_1 %>% 
@@ -88,25 +89,24 @@ lobster_2<- lobster_1 %>%
 
 lobster_2
 
+#Do an Levene test to see if variances are equal
+lobster_levene<- leveneTest(SIZE ~ SITE, data = lobster_2)
+lobster_levene
+
+#The variances are not equal. Look at actual variances to determine if ANOVA can still be used. 
+
 variance<- lobster_2 %>% 
   group_by(SITE) %>% 
   summarize(variance = var(SIZE))
 variance
 
-#This shows that the lowest variance is less than 4  times smaller than the largest variance, so we can use a one way ANOVA
+# This shows that the lowest variance is less than 4  times smaller than the largest variance, so we can use a one way ANOVA
 
-#Do an Levene test to see if variances are equal
-lobster_levene<- leveneTest(SIZE ~ SITE, data = lobster_2)
-lobster_levene
+# Run ANOVA to test for differences in means across groups
+# HO: Means across all sites are equal
+#HA: At least two means are not equal
 
-#The variances are not equal
-
-# Run ANOVA to see if means are equal
-
-lobster_ANOVA<- aov(SITE ~ SIZE, data = lobster_2) 
-
-#table with the results of  ANOVA
-
+lobster_ANOVA <- aov(SIZE ~SITE, data = lobster_2)
 summary(lobster_ANOVA)
 
 # reject null hypothesis, at least two samples are from sites with different means
@@ -115,7 +115,7 @@ summary(lobster_ANOVA)
 
 lobster_hsd<- TukeyHSD(lobster_ANOVA)
 lobster_hsd
-
+plot(lobster_hsd , las=1 , col="brown" )
 # CARP and AQUE are not different
 # IVEE and AQUE are not different
 # IVEE and CARP are not different
@@ -129,10 +129,23 @@ site_summary<- lobster_2 %>%
             mean = mean(SIZE))
 site_summary
 
-lobster_bar<- ggplot(site_summary, aes(x = SITE, y = mean))+
-  geom_col()+
-  geom_errorbar(aes(ymin = mean-sd, ymax = mean+sd))
-lobster_bar
+lobster_box<- ggplot(lobster_2, aes(x = SITE, y = SIZE))+
+  geom_boxplot()
+lobster_box
+
+# Experimental Code to get the letters above the graph..... 
+generate_label_df <- function(TUKEY, variable){
+  Tukey.levels <- TUKEY[[variable]][,4]
+  Tukey.labels <- data.frame(multcompLetters(Tukey.levels)['Letters'])
+  Tukey.labels$SITE=rownames(Tukey.labels)
+  Tukey.labels=Tukey.labels[order(Tukey.labels$SITE) , ]
+  return(Tukey.labels)
+}
+LABEL=generate_label_df(TUKEY , "SITE")
+my_colors=c( rgb(143,199,74,maxColorValue = 255),rgb(242,104,34,maxColorValue = 255), rgb(111,145,202,maxColorValue = 255),rgb(254,188,18,maxColorValue = 255) , rgb(74,132,54,maxColorValue = 255),rgb(236,33,39,maxColorValue = 255),rgb(165,103,40,maxColorValue = 255))
+
+experiment = boxplot(lobster_2$SIZE ~ lobster_2$SITE, ylim=c(min(lobster_2$SIZE) , 1.1*max(lobster_2$SIZE)) , col=my_colors[as.numeric(LABEL[ , 1])] , ylab="Lobster Size" , main="Site")
+
 # ask in office hours why ANOVA and Tukey says means are different but graph of means by site looks similar
 
 ```
