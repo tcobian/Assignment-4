@@ -144,32 +144,32 @@ lobster_col <- ggplot(site_summary, aes(x = SITE, y = mean)) +
   geom_errorbar(aes(ymin =mean - sd, ymax = mean + sd), color = "gray0", width = .3) +
   scale_y_continuous(expand = c(0,0), limits = c(0,100)) +
   scale_x_discrete(labels = c("Arroyo Quemado","Carpinteria","Isla Vista","Mohawk Reef","Naples Reef")) +
-  annotate("text", x = 1, y = 89, label = "A", family = "Times New Roman") +
-  annotate("text", x = 2, y = 89, label = "A", family = "Times New Roman") +
-  annotate("text", x = 3, y = 90, label = "A", family = "Times New Roman") +
-  annotate("text", x = 4, y = 86, label = "B", family = "Times New Roman") +
-  annotate("text", x = 5, y = 93, label = "C", family = "Times New Roman") +
+  annotate("text", x = 1, y = 89, label = "A", family = "Arial") +
+  annotate("text", x = 2, y = 89, label = "A", family = "Arial") +
+  annotate("text", x = 3, y = 90, label = "A", family = "Arial") +
+  annotate("text", x = 4, y = 86, label = "B", family = "Arial") +
+  annotate("text", x = 5, y = 93, label = "C", family = "Arial") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), axis.line = element_line(colour = "black"),text = element_text(family = "Times New Roman"))+
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),text = element_text(family = "Arial"))+
   xlab("\n Long-Term Ecological Research Site")+
   ylab("Mean Lobster Carapace Length (mm)")
 lobster_col
 
 # Boxplot with letters above the ones that DID NOT differ significantly. 
 
-lobster_box <- ggplot(lobster_2, aes(x = SITE, y = SIZE))+
+lobster_box <- ggplot(lobster_2, aes(x = SITE, y = SIZE)) +
   geom_boxplot()+
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), axis.line = element_line(colour = "black"),text = element_text(family = "Times New Roman"))+
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),text = element_text(family = "Arial"))+
   xlab("\n Long-Term Ecological Research Site")+
   ylab("Mean Lobster Carapace Length (mm)") +
   scale_y_continuous(expand = c(0,0), limits = c(0,175)) +
   scale_x_discrete(labels = c("Arroyo Quemado","Carpinteria","Isla Vista","Mohawk Reef","Naples Reef")) +
-  annotate("text", x = 1, y = 115, label = "A", family = "Times New Roman") +
-  annotate("text", x = 2, y = 170, label = "A", family = "Times New Roman") +
-  annotate("text", x = 3, y = 160, label = "A", family = "Times New Roman") +
-  annotate("text", x = 4, y = 120, label = "B", family = "Times New Roman") +
-  annotate("text", x = 5, y = 140, label = "C", family = "Times New Roman")
+  annotate("text", x = 1, y = 115, label = "A", family = "Arial") +
+  annotate("text", x = 2, y = 170, label = "A", family = "Arial") +
+  annotate("text", x = 3, y = 160, label = "A", family = "Arial") +
+  annotate("text", x = 4, y = 120, label = "B", family = "Arial") +
+  annotate("text", x = 5, y = 140, label = "C", family = "Arial")
 
 lobster_box
 
