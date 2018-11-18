@@ -13,13 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(knitr)
 library(plotly)
-install.packages("vcdExtra")
 library(vcdExtra)
 library(car)
 library(onewaytests)
 library(kableExtra)
 library(xtable)
-library(multcompView)
 library(RColorBrewer)
 library(effsize)
 lobster_size_abundance<-read_csv("lobster_size_abundance.csv")
@@ -60,6 +58,7 @@ abundance_graph<-ggplot(lobster_1, aes(x = YEAR, y = COUNT))+
   geom_point(aes(color = COUNT), show.legend = "false", alpha = 0.5)+
   facet_wrap(~SITE, scales = "free")+
   scale_y_continuous(name = "number of lobsters", limits = c(0,25))+
+  labs(title = "Number of lobsters by Site" )+
   theme_classic()
 abundance_graph
 ggplotly(abundance_graph)
@@ -71,6 +70,7 @@ pressure_graph<- ggplot(lobster_traps_1, aes(x = YEAR, y = TRAPS))+
   geom_point(aes(color = TRAPS), show.legend = "false", alpha = 0.5)+
   facet_wrap(~SITE, scales = "free")+
   scale_y_continuous(name = "number of traps", limits = c(0,25))+
+  labs(title = "Number of Traps by Site")+
   theme_classic()
 pressure_graph
 ggplotly(pressure_graph)
