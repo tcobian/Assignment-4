@@ -620,6 +620,7 @@ lobster_4<- lobster_2 %>%
 # we need to try and make a df that has eaxh site and the amount of lobsters above and below th elegal limit
 
 legal_counts<- lobster_2 %>% 
+  filter(YEAR == 2017) %>% 
   mutate(legal = case_when(SIZE>=82.6 ~ "yes", SIZE<82.6 ~ "no")) %>% 
   count(SITE,legal) %>% 
   spread(legal,n) %>% 
