@@ -58,7 +58,7 @@ lobster_traps$MONTH<- (month.abb[lobster_traps$MONTH])
 ```{r, echo=FALSE}
 #graph for each site relating count to year
 abundance_graph<-ggplot(lobster_1, aes(x = YEAR, y = COUNT))+
-  geom_point(aes(color = COUNT), show.legend = "false", alpha = 0.5)+
+  geom_point(aes(color = COUNT), alpha = 0.5)+
   facet_wrap(~SITE, scales = "free")+
   scale_y_continuous(name = "Number of lobsters", limits = c(0,25))+
   scale_x_continuous(name = "Year")+
@@ -75,7 +75,7 @@ ggplotly(abundance_graph)
 #graph relating fishing pressure (number of traps) for each site by year
 
 pressure_graph<- ggplot(lobster_traps_1, aes(x = YEAR, y = TRAPS))+
-  geom_point(aes(color = TRAPS), show.legend = "false", alpha = 0.5)+
+  geom_point(aes(color = TRAPS), alpha = 0.5)+
   facet_wrap(~SITE, scales = "free")+
   scale_y_continuous(name = "Number of traps", limits = c(0,25))+
   scale_x_continuous(name = "Year") +
