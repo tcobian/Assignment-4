@@ -62,7 +62,7 @@ abundance_graph<-ggplot(lobster_1, aes(x = YEAR, y = COUNT))+
   scale_y_continuous(name = "Number of lobsters", limits = c(0,25))+
   scale_x_continuous(name = "Year") +
   labs(title = "Number of Lobsters by Site" ) +
-  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.title = element_text(hjust = 0.5)) 
   theme_classic()
 abundance_graph
 ggplotly(abundance_graph)
@@ -76,7 +76,7 @@ pressure_graph<- ggplot(lobster_traps_1, aes(x = YEAR, y = TRAPS))+
   scale_y_continuous(name = "Number of traps", limits = c(0,25))+
   scale_x_continuous(name = "Year") +
   labs(title = "Number of Traps by Site") +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) 
   theme_classic()
 pressure_graph
 ggplotly(pressure_graph)
