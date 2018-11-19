@@ -168,7 +168,7 @@ lobster_col <- ggplot(site_summary, aes(x = SITE, y = mean)) +
   theme(plot.title = element_text(hjust = 0.5))
 lobster_col
 
-# Boxplot with letters above the ones that DID NOT differ significantly. 
+# Boxplot with p-values above the ones that DID differ significantly. 
 
 lobster_box <- ggplot(lobster_size_2017, aes(x = SITE, y = SIZE)) +
   geom_boxplot()+
@@ -180,11 +180,7 @@ lobster_box <- ggplot(lobster_size_2017, aes(x = SITE, y = SIZE)) +
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_y_continuous(expand = c(0,0), limits = c(0,175)) +
   scale_x_discrete(labels = c("Arroyo Quemado","Carpinteria","Isla Vista","Mohawk Reef","Naples Reef")) +
-  annotate("text", x = 1, y = 115, label = "A", family = "Arial") +
-  annotate("text", x = 2, y = 170, label = "A", family = "Arial") +
-  annotate("text", x = 3, y = 160, label = "A", family = "Arial") +
-  annotate("text", x = 4, y = 120, label = "B", family = "Arial") +
-  annotate("text", x = 5, y = 140, label = "C", family = "Arial")
+  geom_signif(y_position = c(130.0, 145.0), xmin = c(2,3), xmax = c(5,5), annotation = c("p = 0.023","p = 0.004"), tip_length = 0.1, size = 0.5, textsize = 3, family = "Arial") 
 
 lobster_box
 
