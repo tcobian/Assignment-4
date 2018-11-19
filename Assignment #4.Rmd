@@ -60,8 +60,14 @@ abundance_graph<-ggplot(lobster_1, aes(x = YEAR, y = COUNT))+
   geom_point(aes(color = COUNT), show.legend = "false", alpha = 0.5)+
   facet_wrap(~SITE, scales = "free")+
   scale_y_continuous(name = "Number of lobsters", limits = c(0,25))+
+<<<<<<< HEAD
   scale_x_continuous(name = "Year")
   labs(title = "Number of lobsters by Site", x = "Year", y =  "Number of lobsters" )+
+=======
+  scale_x_continuous(name = "Year") +
+  labs(title = "Number of Lobsters by Site" ) +
+  theme(plot.title = element_text(hjust = 0.5)) 
+>>>>>>> b73a393425064652cda59838fac99ff72a4e91fa
   theme_classic()
 abundance_graph
 ggplotly(abundance_graph)
@@ -73,8 +79,9 @@ pressure_graph<- ggplot(lobster_traps_1, aes(x = YEAR, y = TRAPS))+
   geom_point(aes(color = TRAPS), show.legend = "false", alpha = 0.5)+
   facet_wrap(~SITE, scales = "free")+
   scale_y_continuous(name = "Number of traps", limits = c(0,25))+
-  scale_x_continuous(name = "Year")
-  labs(title = "Number of Traps by Site")+
+  scale_x_continuous(name = "Year") +
+  labs(title = "Number of Traps by Site") +
+  theme(plot.title = element_text(hjust = 0.5)) 
   theme_classic()
 pressure_graph
 ggplotly(pressure_graph)
@@ -94,14 +101,16 @@ lobster_2<- lobster_1 %>%
   expand.dft(freq = "COUNT") 
 
 lobster_2
+lobster_size_2017<- lobster_2 %>% 
+  filter(YEAR == 2017, SIZE != "NA")
 
 #Do an Levene test to see if variances are equal
-lobster_levene<- leveneTest(SIZE ~ SITE, data = lobster_2)
+lobster_levene<- leveneTest(SIZE ~ SITE, data = lobster_size_2017)
 lobster_levene
 
 #The variances are not equal. Look at actual variances to determine if ANOVA can still be used. 
 
-variance<- lobster_2 %>% 
+variance<- lobster_size_2017 %>% 
   group_by(SITE) %>% 
   summarize(variance = var(SIZE))
 variance
@@ -117,7 +126,7 @@ unique(lobster_2$SITE)
 # HO: Means across all sites are equal
 #HA: At least two means are not equal
 
-lobster_ANOVA <- aov(SIZE ~ SITE, data = lobster_2)
+lobster_ANOVA <- aov(SIZE ~ SITE, data = lobster_size_2017)
 summary(lobster_ANOVA)
 
 # reject null hypothesis, at least two samples are from sites with different means
@@ -127,18 +136,17 @@ summary(lobster_ANOVA)
 lobster_hsd<- TukeyHSD(lobster_ANOVA)
 lobster_hsd
 plot(lobster_hsd , las=1 , col="brown" )
-# CARP and AQUE are not different
-# IVEE and AQUE are not different
-# IVEE and CARP are not different
+# NAPL and CARP are significantly different.
+# NAPL and IVEE are significantly different.
 
 # create a graphic to show differences in means
 
 #finding mean and sd to put in error bars in graph
-site_summary<- lobster_2 %>% 
+site_summary_2017<- lobster_size_2017 %>% 
   group_by(SITE) %>% 
   summarize(sd = sd(SIZE),
             mean = mean(SIZE))
-site_summary
+site_summary_2017
 
 # This column graph has letters above for sites that DID NOT differ signficantly. Not sure if this is the right way to do this though. 
 
@@ -162,7 +170,7 @@ lobster_col
 
 # Boxplot with letters above the ones that DID NOT differ significantly. 
 
-lobster_box <- ggplot(lobster_2, aes(x = SITE, y = SIZE)) +
+lobster_box <- ggplot(lobster_size_2017, aes(x = SITE, y = SIZE)) +
   geom_boxplot()+
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         panel.background = element_blank(), axis.line = element_line(colour = "black"),text = element_text(family = "Arial"))+
@@ -611,17 +619,15 @@ grouped_lobster_2<- lobster_2 %>%
 
 grouped_lobster_2
 
-##################################### New table relating mean vlaues by site for 2012 and 2017
-
+##################################### New table relating mean vlaues for MPA sites for 2012 and 2017
 
 mpa_summary<- lobster_2 %>% 
-  filter(YEAR == "2012" | YEAR == "2017") %>% 
-  select(SITE, YEAR, SIZE) %>% 
+  filter(YEAR == 2012 | YEAR == 2017) %>% 
+  filter(SITE == "IVEE" | SITE == "NAPL") %>% 
+  select("YEAR","SITE","SIZE") %>% 
   group_by(SITE, YEAR) %>% 
-  summarize(mean = round(mean(SIZE), 2),
+  summarize(mean =round(mean(SIZE), 2),
             sd = round(sd(SIZE), 2))
-
-mpa_summary
 
 mpa_summary_table<-kable(mpa_summary, col.names = c("Site",
                                         "Year",
@@ -634,8 +640,28 @@ mpa_summary_table<-kable(mpa_summary, col.names = c("Site",
 
 mpa_summary_table
 
+################################### summary table for non MPA sites
 
-mpa_summary_table
+non_mpa_summary<-lobster_2 %>% 
+  filter(YEAR == 2012 | YEAR == 2017) %>% 
+  filter(SITE == "AQUE" | SITE == "CARP" | SITE == "MOHK") %>% 
+  select("YEAR","SITE","SIZE") %>% 
+  group_by(SITE, YEAR) %>% 
+  summarize(mean =round(mean(SIZE), 2),
+            sd = round(sd(SIZE), 2))
+
+non_mpa_summary_table<-kable(non_mpa_summary, col.names = c("Site",
+                                        "Year",
+                                        "Mean Carapace length (mm)",
+                                        "Standard Deviation (mm)"),
+                         font.lab = 50) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>% 
+  column_spec(1:1, bold = T) %>% 
+  row_spec(1:2, bold = T, color = "dark blue")
+
+non_mpa_summary_table
+
+
   
   
 # grouped histogram with new grouped_lobster_2 df showing the mean size at each site in year 2012 and 2017
