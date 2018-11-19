@@ -610,9 +610,10 @@ row.names(grouped_lobster_2)<- c("AQUE","CARP","IVEE","MOHWK","NAPL")
 grouped_lobster_2
   
 # grouped histogram with new grouped_lobster_2 df showing the mean size at each site in year 2012 and 2017
-size_hist<- ggplot(grouped_lobster_2, aes(x = YEAR))+
+size_hist<- ggplot(lobster_2, aes(x = YEAR))+
   geom_histogram(fill = "olivedrab4")+
-  facet_wrap("SITE", scales = "free")
+  facet_wrap("SITE", scales = "free")+
+  filter("YEAR" == 2012 | "YEAR" == 2017)
 
 size_hist
 
