@@ -59,7 +59,8 @@ lobster_traps$MONTH<- (month.abb[lobster_traps$MONTH])
 abundance_graph<-ggplot(lobster_1, aes(x = YEAR, y = COUNT))+
   geom_point(aes(color = COUNT), show.legend = "false", alpha = 0.5)+
   facet_wrap(~SITE, scales = "free")+
-  scale_y_continuous(name = "number of lobsters", limits = c(0,25))+
+  scale_y_continuous(name = "Number of lobsters", limits = c(0,25))+
+  scale_x_continuous(name = "Year")
   labs(title = "Number of lobsters by Site" )+
   theme_classic()
 abundance_graph
@@ -72,6 +73,7 @@ pressure_graph<- ggplot(lobster_traps_1, aes(x = YEAR, y = TRAPS))+
   geom_point(aes(color = TRAPS), show.legend = "false", alpha = 0.5)+
   facet_wrap(~SITE, scales = "free")+
   scale_y_continuous(name = "Number of traps", limits = c(0,25))+
+  scale_x_continuous(name = "Year")
   labs(title = "Number of Traps by Site")+
   theme_classic()
 pressure_graph
