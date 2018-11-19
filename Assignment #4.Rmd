@@ -22,6 +22,7 @@ library(kableExtra)
 library(xtable)
 library(RColorBrewer)
 library(effsize)
+library(ggsignif)
 lobster_size_abundance<-read_csv("lobster_size_abundance.csv")
 lobster_traps<- read_csv("lobster_traps (1).csv")
 
@@ -145,7 +146,7 @@ site_summary_2017
 
 # This column graph has letters above for sites that DID NOT differ signficantly. Not sure if this is the right way to do this though. 
 
-lobster_col <- ggplot(site_summary, aes(x = SITE, y = mean)) +
+lobster_col <- ggplot(site_summary_2017, aes(x = SITE, y = mean)) +
   geom_col(colour = NA, fill = "snow3", width = 0.6) +
   geom_errorbar(aes(ymin =mean - sd, ymax = mean + sd), color = "gray0", width = .3) +
   scale_y_continuous(expand = c(0,0), limits = c(0,100)) +
