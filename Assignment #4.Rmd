@@ -96,14 +96,16 @@ lobster_2<- lobster_1 %>%
   expand.dft(freq = "COUNT") 
 
 lobster_2
+lobster_size_2017<- lobster_2 %>% 
+  filter(YEAR == 2017, SIZE != "NA")
 
 #Do an Levene test to see if variances are equal
-lobster_levene<- leveneTest(SIZE ~ SITE, data = lobster_2)
+lobster_levene<- leveneTest(SIZE ~ SITE, data = lobster_size_2017)
 lobster_levene
 
 #The variances are not equal. Look at actual variances to determine if ANOVA can still be used. 
 
-variance<- lobster_2 %>% 
+variance<- lobster_size_2017 %>% 
   group_by(SITE) %>% 
   summarize(variance = var(SIZE))
 variance
@@ -119,7 +121,7 @@ unique(lobster_2$SITE)
 # HO: Means across all sites are equal
 #HA: At least two means are not equal
 
-lobster_ANOVA <- aov(SIZE ~ SITE, data = lobster_2)
+lobster_ANOVA <- aov(SIZE ~ SITE, data = lobster_size_2017)
 summary(lobster_ANOVA)
 
 # reject null hypothesis, at least two samples are from sites with different means
@@ -129,18 +131,17 @@ summary(lobster_ANOVA)
 lobster_hsd<- TukeyHSD(lobster_ANOVA)
 lobster_hsd
 plot(lobster_hsd , las=1 , col="brown" )
-# CARP and AQUE are not different
-# IVEE and AQUE are not different
-# IVEE and CARP are not different
+# NAPL and CARP are significantly different.
+# NAPL and IVEE are significantly different.
 
 # create a graphic to show differences in means
 
 #finding mean and sd to put in error bars in graph
-site_summary<- lobster_2 %>% 
+site_summary_2017<- lobster_size_2017 %>% 
   group_by(SITE) %>% 
   summarize(sd = sd(SIZE),
             mean = mean(SIZE))
-site_summary
+site_summary_2017
 
 # This column graph has letters above for sites that DID NOT differ signficantly. Not sure if this is the right way to do this though. 
 
@@ -164,7 +165,7 @@ lobster_col
 
 # Boxplot with letters above the ones that DID NOT differ significantly. 
 
-lobster_box <- ggplot(lobster_2, aes(x = SITE, y = SIZE)) +
+lobster_box <- ggplot(lobster_size_2017, aes(x = SITE, y = SIZE)) +
   geom_boxplot()+
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         panel.background = element_blank(), axis.line = element_line(colour = "black"),text = element_text(family = "Arial"))+
