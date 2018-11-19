@@ -61,7 +61,7 @@ abundance_graph<-ggplot(lobster_1, aes(x = YEAR, y = COUNT))+
   facet_wrap(~SITE, scales = "free")+
   scale_y_continuous(name = "Number of lobsters", limits = c(0,25))+
   scale_x_continuous(name = "Year")
-  labs(title = "Number of lobsters by Site" )+
+  labs(title = "Number of lobsters by Site", x = "Year", y =  "Number of lobsters" )+
   theme_classic()
 abundance_graph
 ggplotly(abundance_graph)
@@ -610,9 +610,36 @@ grouped_lobster_2<- lobster_2 %>%
   select(-n) 
 
 grouped_lobster_2
+
+##################################### New table relating mean vlaues by site for 2012 and 2017
+
+
+mpa_summary<- lobster_2 %>% 
+  filter(YEAR == "2012" | YEAR == "2017") %>% 
+  select(SITE, YEAR, SIZE) %>% 
+  group_by(SITE, YEAR) %>% 
+  summarize(mean = round(mean(SIZE), 2),
+            sd = round(sd(SIZE), 2))
+
+mpa_summary
+
+mpa_summary_table<-kable(mpa_summary, col.names = c("Site",
+                                        "Year",
+                                        "Mean Carapace length (mm)",
+                                        "Standard Deviation (mm)"),
+                         font.lab = 50) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>% 
+  column_spec(1:1, bold = T) %>% 
+  row_spec(1:2, bold = T, color = "dark blue")
+
+mpa_summary_table
+
+
+mpa_summary_table
+  
   
 # grouped histogram with new grouped_lobster_2 df showing the mean size at each site in year 2012 and 2017
-size_hist<- ggplot(lobster_2, aes(x = YEAR))+
+size_hist<- ggplot(mpa_summary, aes(x = YEAR))+
   geom_histogram(fill = "olivedrab4")+
   facet_wrap("SITE", scales = "free")
 
