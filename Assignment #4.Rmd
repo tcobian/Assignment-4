@@ -1,8 +1,10 @@
 ---
-title: 'Assignment 4'
+title: "Assignment 4"
 author: "Tyler Cobian, Sara Orofino, Alex Ivina"
 date: "November 8, 2018"
-output: html_document
+output:
+  html_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -78,7 +80,6 @@ ggplotly(pressure_graph)
 
 ```
 
-
 2. Compare mean lobster size by site in 2017
 
 ```{r, echo=FALSE}
@@ -152,7 +153,9 @@ lobster_col <- ggplot(site_summary, aes(x = SITE, y = mean)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         panel.background = element_blank(), axis.line = element_line(colour = "black"),text = element_text(family = "Arial"))+
   xlab("\n Long-Term Ecological Research Site")+
-  ylab("Mean Lobster Carapace Length (mm)")
+  ylab("Mean Lobster Carapace Length (mm)") +
+  ggtitle("Size Distribution of Spiny Lobster by SBC LTER Sites in 2017") +
+  theme(plot.title = element_text(hjust = 0.5))
 lobster_col
 
 # Boxplot with letters above the ones that DID NOT differ significantly. 
@@ -163,6 +166,8 @@ lobster_box <- ggplot(lobster_2, aes(x = SITE, y = SIZE)) +
         panel.background = element_blank(), axis.line = element_line(colour = "black"),text = element_text(family = "Arial"))+
   xlab("\n Long-Term Ecological Research Site")+
   ylab("Mean Lobster Carapace Length (mm)") +
+  ggtitle("Size Distribution of Spiny Lobster by SBC LTER Sites in 2017") +
+  theme(plot.title = element_text(hjust = 0.5)) +
   scale_y_continuous(expand = c(0,0), limits = c(0,175)) +
   scale_x_discrete(labels = c("Arroyo Quemado","Carpinteria","Isla Vista","Mohawk Reef","Naples Reef")) +
   annotate("text", x = 1, y = 115, label = "A", family = "Arial") +
@@ -599,13 +604,16 @@ grouped_lobster_2<- lobster_2 %>%
   group_by(SITE) %>% 
   filter(YEAR == 2012 | YEAR == 2017) %>% 
   mutate(mean_size = mean(SIZE)) %>% 
-  select(-SIZE)
+  count(SITE,YEAR,mean_size) %>% 
+  select(-n) 
+row.names(grouped_lobster_2)<- c("AQUE","CARP","IVEE","MOHWK","NAPL")
 grouped_lobster_2
   
 # grouped histogram with new grouped_lobster_2 df showing the mean size at each site in year 2012 and 2017
 size_hist<- ggplot(grouped_lobster_2, aes(x = YEAR))+
   geom_histogram(fill = "olivedrab4")+
   facet_wrap("SITE", scales = "free")
+
 size_hist
 
 ```
