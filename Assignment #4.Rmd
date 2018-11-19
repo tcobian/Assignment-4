@@ -22,6 +22,7 @@ library(kableExtra)
 library(xtable)
 library(RColorBrewer)
 library(effsize)
+library(ggsignif)
 lobster_size_abundance<-read_csv("lobster_size_abundance.csv")
 lobster_traps<- read_csv("lobster_traps (1).csv")
 
@@ -60,14 +61,12 @@ abundance_graph<-ggplot(lobster_1, aes(x = YEAR, y = COUNT))+
   geom_point(aes(color = COUNT), show.legend = "false", alpha = 0.5)+
   facet_wrap(~SITE, scales = "free")+
   scale_y_continuous(name = "Number of lobsters", limits = c(0,25))+
-<<<<<<< HEAD
-  scale_x_continuous(name = "Year")
+  scale_x_continuous(name = "Year")+
   labs(title = "Number of lobsters by Site", x = "Year", y =  "Number of lobsters" )+
-=======
+
   scale_x_continuous(name = "Year") +
   labs(title = "Number of Lobsters by Site" ) +
   theme(plot.title = element_text(hjust = 0.5)) 
->>>>>>> b73a393425064652cda59838fac99ff72a4e91fa
   theme_classic()
 abundance_graph
 ggplotly(abundance_graph)
@@ -150,7 +149,7 @@ site_summary_2017
 
 # This column graph has letters above for sites that DID NOT differ signficantly. Not sure if this is the right way to do this though. 
 
-lobster_col <- ggplot(site_summary, aes(x = SITE, y = mean)) +
+lobster_col <- ggplot(site_summary_2017, aes(x = SITE, y = mean)) +
   geom_col(colour = NA, fill = "snow3", width = 0.6) +
   geom_errorbar(aes(ymin =mean - sd, ymax = mean + sd), color = "gray0", width = .3) +
   scale_y_continuous(expand = c(0,0), limits = c(0,100)) +
