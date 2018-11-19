@@ -71,7 +71,7 @@ ggplotly(abundance_graph)
 pressure_graph<- ggplot(lobster_traps_1, aes(x = YEAR, y = TRAPS))+
   geom_point(aes(color = TRAPS), show.legend = "false", alpha = 0.5)+
   facet_wrap(~SITE, scales = "free")+
-  scale_y_continuous(name = "number of traps", limits = c(0,25))+
+  scale_y_continuous(name = "Number of traps", limits = c(0,25))+
   labs(title = "Number of Traps by Site")+
   theme_classic()
 pressure_graph
@@ -606,14 +606,13 @@ grouped_lobster_2<- lobster_2 %>%
   mutate(mean_size = mean(SIZE)) %>% 
   count(SITE,YEAR,mean_size) %>% 
   select(-n) 
-row.names(grouped_lobster_2)<- c("AQUE","CARP","IVEE","MOHWK","NAPL")
+
 grouped_lobster_2
   
 # grouped histogram with new grouped_lobster_2 df showing the mean size at each site in year 2012 and 2017
 size_hist<- ggplot(lobster_2, aes(x = YEAR))+
   geom_histogram(fill = "olivedrab4")+
-  facet_wrap("SITE", scales = "free")+
-  filter("YEAR" == 2012 | "YEAR" == 2017)
+  facet_wrap("SITE", scales = "free")
 
 size_hist
 
