@@ -658,7 +658,7 @@ lobster_4<- lobster_2 %>%
 
 legal_counts<- lobster_2 %>% 
   filter(YEAR == 2017) %>% 
-  mutate(legal = case_when(SIZE>=82.6 ~ "yes", SIZE<82.6 ~ "no")) %>% 
+  mutate(legal = case_when(SIZE>=82.6 ~ "Legal", SIZE<82.6 ~ "Illegal")) %>% 
   count(SITE,legal) %>% 
   spread(legal,n) %>% 
   select(-SITE)
